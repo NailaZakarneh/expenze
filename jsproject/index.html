@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expnze — Expense Tracker</title>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="bg-glow"></div>
+
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+          <div class="brand-name">Expnze</div>
+          <div class="brand-sub">Expense Tracker</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active">
+          <i class="fa-solid fa-grid-2"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item">
+          <i class="fa-solid fa-receipt"></i>
+          <span>Expenses</span>
+        </button>
+        <button class="nav-item">
+          <i class="fa-solid fa-gear"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="chip">
+          <i class="fa-solid fa-cloud"></i>
+          <span>API Connected</span>
+        </div>
+        <div class="hint">CRUD • Search • Pagination</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h1 class="title">Your expenses</h1>
+          <p class="subtitle">Track, edit, and manage your spending </p>
+        </div>
+
+        <div class="top-actions">
+          <div class="search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="text" placeholder="Search by name..." />
+            <button id="clearSearchBtn" class="icon-btn" title="Clear">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <button id="addExpenseBtn" class="primary">
+            <i class="fa-solid fa-plus"></i>
+            Add Expense
+          </button>
+        </div>
+      </header>
+
+      <section class="grid">
+        <div class="card total-card">
+          <div class="card-head">
+            <div class="card-title">
+              <i class="fa-solid fa-sack-dollar"></i>
+              Total Expenses
+            </div>
+            <div class="pill" id="totalPill">This page</div>
+          </div>
+          <div class="total-amount" id="totalAmount">$0.00</div>
+          <div class="muted" id="totalMeta">0 items loaded</div>
+        </div>
+
+        <div class="card controls-card">
+          <div class="card-head">
+            <div class="card-title">
+              <i class="fa-solid fa-sliders"></i>
+              Controls
+            </div>
+          </div>
+
+          <div class="controls">
+            <div class="control">
+              <label for="limitSelect">Items per page</label>
+              <select id="limitSelect">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+              </select>
+            </div>
+
+            <div class="control">
+              <label>Quick filters</label>
+              <div class="chips">
+                <button class="chip-btn" id="filterTodayBtn"><i class="fa-regular fa-calendar"></i> Today</button>
+                <button class="chip-btn" id="filterMonthBtn"><i class="fa-regular fa-calendar-days"></i> This month</button>
+                <button class="chip-btn" id="filterResetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+              </div>
+            </div>
+
+            <div class="control">
+              <label>Status</label>
+              <div class="status" id="statusText">
+                <span class="dot"></span>
+                Ready
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card list-card">
+        <div class="list-head">
+          <div class="list-title">
+            <i class="fa-solid fa-list"></i>
+            Expenses
+          </div>
+
+          <div class="pagination">
+            <button id="prevBtn" class="secondary" disabled>
+              <i class="fa-solid fa-chevron-left"></i>
+              Prev
+            </button>
+
+            <div class="page-indicator">
+              <span id="pageText">Page 1</span>
+              <span class="muted" id="pageMeta">—</span>
+            </div>
+
+            <button id="nextBtn" class="secondary" disabled>
+              Next
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th class="right">Amount</th>
+                <th>Description</th>
+                <th class="right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTbody">
+              <!-- rows -->
+            </tbody>
+          </table>
+
+          <div id="emptyState" class="empty hidden">
+            <div class="empty-emoji">🧾</div>
+            <div class="empty-title">No expenses found</div>
+            <div class="empty-sub">Try changing search, pagination, or add a new expense.</div>
+            <button class="primary" id="emptyAddBtn">
+              <i class="fa-solid fa-plus"></i> Add your first expense
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="expenseDialog" class="dialog">
+    <form id="expenseForm" class="dialog-card" method="dialog">
+      <div class="dialog-head">
+        <div>
+          <div class="dialog-title" id="dialogTitle">Add Expense</div>
+          <div class="dialog-sub" id="dialogSub">Create a new record</div>
+        </div>
+        <button type="button" id="closeDialogBtn" class="icon-btn" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <input type="hidden" id="expenseId" />
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="nameInput">Name *=</label>
+          <input id="nameInput" type="text" placeholder="e.g., Grocery Shopping" required />
+        </div>
+
+        <div class="field">
+          <label for="dateInput">Date *</label>
+          <input id="dateInput" type="date" required />
+        </div>
+
+        <div class="field">
+          <label for="amountInput">Amount *</label>
+          <input id="amountInput" type="number" step="0.01" min="0" placeholder="e.g., 150.50" required />
+        </div>
+
+        <div class="field">
+          <label for="descInput">Description</label>
+          <input id="descInput" type="text" placeholder="Optional..." />
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" class="secondary" id="cancelBtn">Cancel</button>
+        <button type="submit" class="primary" id="saveBtn">
+          <i class="fa-solid fa-check"></i>
+          Save
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
